@@ -28,6 +28,7 @@ def show_menu():
     option = input("Enter option: ")
     return option
 
+
 def get_record():
     print("")
     first = input("Enter first name > ")
@@ -35,11 +36,15 @@ def get_record():
 
     try:
         doc = coll.find_one({'first': first.lower(), 'last': last.lower()})
-    except:
+    except Exception:
+        print("Error accessing the database")
+
+    if not doc:
         print("")
         print("Error! No results found.")
-    
+
     return doc
+
 
 def add_record():
     print("")
@@ -51,13 +56,15 @@ def add_record():
     occupation = input("Enter occupation > ")
     nationality = input("Enter nationality > ")
 
-    new_doc = {'first': first.lower(), 'last': last.lower(), 'dob': dob,       'gender': gender, 'hair_colour': hair_colour, 'occupation': occupation, 'nationality': nationality}
+    new_doc = {'first': first.lower(), 'last': last.lower(), 'dob': dob,
+               'gender': gender, 'hair_colour': hair_colour, 'occupation':
+               occupation, 'nationality': nationality}
 
     try:
         coll.insert_one(new_doc)
         print("")
         print("Document inserted")
-    except:
+    except Exception:
         print("Error accessing database")
 
 
@@ -85,8 +92,30 @@ def edit_record():
             coll.update_one(doc, {'$set': update_doc})
             print("")
             print("Document updated")
-        except:
+        except Exception:
             print("Error accessing database")
+
+
+def delete_record():
+
+    doc = get_record()
+
+    if doc:
+        print("")
+        for k, v in doc.items():
+            if k != "_id":
+                print(k.capitalize() + ": " + v.capitalize())
+
+        print("")
+        confirmation = input("Are you sure you want to delete?\n Y or N > ")
+        print("")
+
+        if confirmation.lower() == 'y':
+            try:
+                coll.delete_one(doc)
+                print("Document deleted!")
+            except Exception:
+                print("Document not deleted")
 
 
 def main_loop():
@@ -99,7 +128,7 @@ def main_loop():
         elif option == "3":
             edit_record()
         elif option == "4":
-            print("You have selected option 4")
+            delete_record()
         elif option == "5":
             conn.close()
             break
