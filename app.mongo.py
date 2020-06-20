@@ -113,9 +113,12 @@ def delete_record():
         if confirmation.lower() == 'y':
             try:
                 coll.delete_one(doc)
+                print("")
                 print("Document deleted!")
             except Exception:
                 print("Document not deleted")
+        else:
+            print("Document not deleted!")
 
 
 def main_loop():
